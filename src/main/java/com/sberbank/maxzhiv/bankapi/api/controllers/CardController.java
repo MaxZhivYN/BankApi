@@ -2,26 +2,19 @@ package com.sberbank.maxzhiv.bankapi.api.controllers;
 
 import com.sberbank.maxzhiv.bankapi.api.dto.CardDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardMoneyDto;
-import com.sberbank.maxzhiv.bankapi.api.exceptions.BadRequestException;
 import com.sberbank.maxzhiv.bankapi.api.factories.CardDtoFactory;
-import com.sberbank.maxzhiv.bankapi.api.servicies.AccountService;
-import com.sberbank.maxzhiv.bankapi.api.servicies.CardService;
-import com.sberbank.maxzhiv.bankapi.store.entities.AccountEntity;
-import com.sberbank.maxzhiv.bankapi.store.entities.CardEntity;
+import com.sberbank.maxzhiv.bankapi.api.servicies.interfaces.ICardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
 @RestController
 public class CardController {
-    private final CardService cardService;
-    private final AccountService accountService;
-    private final CardDtoFactory cardDtoFactory;
+    private final ICardService cardService;
 
     private static final String GET_CARD_BY_ACCOUNT_ID = "api/accounts/{account_id}/cards";
     private static final String CREATE_CARD = "api/accounts/{account_id}/cards";
@@ -32,16 +25,7 @@ public class CardController {
     public List<CardDto> getCardByAccountId(
             @PathVariable("account_id") Integer accountId) {
 
-        if (accountId < 0)
-            throw new BadRequestException("account_id must be > 0");
-
-        accountService.getAccountByIdOrThrowException(accountId);
-
-        List<CardEntity> cardEntities = cardService.getAllCardsByAccountId(accountId);
-
-        return cardEntities.stream()
-                .map(cardDtoFactory::makeCardDto)
-                .collect(Collectors.toList());
+        return cardService.getCardByAccountId(accountId);
     }
 
     @PostMapping(CREATE_CARD)
@@ -49,9 +33,7 @@ public class CardController {
             @PathVariable("account_id") Integer accountId,
             @RequestParam(name = "name") String cardName) {
 
-        CardEntity card = cardService.createNewCardByAccount(accountId, cardName);
-
-        return cardDtoFactory.makeCardDto(card);
+        return cardService.createCard(accountId, cardName);
     }
 
     @PatchMapping(PUSH_MONEY_TO_CARD)
@@ -59,20 +41,13 @@ public class CardController {
             @PathVariable("card_id") Integer cardId,
             @RequestParam(name = "money") Double money) {
 
-        if (money < 0)
-            throw new BadRequestException("money need to be > 0");
-
-        CardEntity card = cardService.pushMoneyToCard(cardId, money);
-
-        return cardDtoFactory.makeCardDto(card);
+        return cardService.pushMoneyToCard(cardId, money);
     }
 
     @GetMapping(GET_MONEY_BALANCE)
     public CardMoneyDto getMoneyBalance(
             @PathVariable("card_id") Integer cardId) {
 
-        CardEntity card = cardService.findCardByIdOrThrowException(cardId);
-
-        return cardDtoFactory.makeCardMoneyDto(card);
+       return cardService.getMoneyBalance(cardId);
     }
 }

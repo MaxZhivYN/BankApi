@@ -21,5 +21,4 @@ public class CardDtoFactory {
                 .money(cardEntity.getBalance())
                 .build();
     }
-
 }
