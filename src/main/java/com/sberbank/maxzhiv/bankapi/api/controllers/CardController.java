@@ -2,7 +2,6 @@ package com.sberbank.maxzhiv.bankapi.api.controllers;
 
 import com.sberbank.maxzhiv.bankapi.api.dto.CardDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardMoneyDto;
-import com.sberbank.maxzhiv.bankapi.api.factories.CardDtoFactory;
 import com.sberbank.maxzhiv.bankapi.api.servicies.interfaces.ICardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -13,15 +12,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 @RestController
+@RequestMapping("api")
 public class CardController {
     private final ICardService cardService;
 
-    private static final String GET_CARD_BY_ACCOUNT_ID = "api/accounts/{account_id}/cards";
-    private static final String CREATE_CARD = "api/accounts/{account_id}/cards";
-    private static final String PUSH_MONEY_TO_CARD = "api/cards/{card_id}";
-    private static final String GET_MONEY_BALANCE = "api/cards/{card_id}";
+    private static final String GET_CARDS_BY_ACCOUNT_ID = "accounts/{account_id}/cards";
+    private static final String CREATE_CARD = "accounts/{account_id}/cards";
+    private static final String PUSH_MONEY_TO_CARD = "cards/{card_id}";
+    private static final String GET_MONEY_BALANCE = "cards/{card_id}";
 
-    @GetMapping(GET_CARD_BY_ACCOUNT_ID)
+    @GetMapping(GET_CARDS_BY_ACCOUNT_ID)
     public List<CardDto> getCardByAccountId(
             @PathVariable("account_id") Integer accountId) {
 

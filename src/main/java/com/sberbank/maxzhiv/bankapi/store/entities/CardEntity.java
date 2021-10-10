@@ -18,5 +18,4 @@ public class CardEntity {
     private Double balance;
 
     private AccountEntity account;
-
 }
