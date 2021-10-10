@@ -1,16 +1,17 @@
 package com.sberbank.maxzhiv.bankapi.api.controllers;
 
+import com.sberbank.maxzhiv.bankapi.api.dto.AckDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardMoneyDto;
 import com.sberbank.maxzhiv.bankapi.api.servicies.interfaces.ICardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.transaction.Transactional;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Transactional
 @RestController
 @RequestMapping("api")
 public class CardController {
@@ -20,6 +21,7 @@ public class CardController {
     private static final String CREATE_CARD = "accounts/{account_id}/cards";
     private static final String PUSH_MONEY_TO_CARD = "cards/{card_id}";
     private static final String GET_MONEY_BALANCE = "cards/{card_id}";
+    private static final String DELETE_CARD = "accounts/{account_id}/cards/{card_id}";
 
     @GetMapping(GET_CARDS_BY_ACCOUNT_ID)
     public List<CardDto> getCardByAccountId(
@@ -50,4 +52,15 @@ public class CardController {
 
        return cardService.getMoneyBalance(cardId);
     }
+
+    @DeleteMapping(DELETE_CARD)
+    public AckDto deleteCard(
+            @PathVariable("account_id") Integer accountId,
+            @PathVariable("card_id") Integer cardId) {
+
+        return cardService.deleteCard(accountId, cardId);
+    }
+
+
+
 }

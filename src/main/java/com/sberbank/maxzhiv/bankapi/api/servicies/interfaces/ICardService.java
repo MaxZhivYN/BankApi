@@ -1,5 +1,6 @@
 package com.sberbank.maxzhiv.bankapi.api.servicies.interfaces;
 
+import com.sberbank.maxzhiv.bankapi.api.dto.AckDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardMoneyDto;
 import com.sberbank.maxzhiv.bankapi.store.entities.CardEntity;
@@ -13,4 +14,5 @@ public interface ICardService {
     CardDto createCard(Integer accountId, String cardName);
     CardDto pushMoneyToCard(Integer cardId, Double money);
     CardMoneyDto getMoneyBalance(Integer cardId);
+    AckDto deleteCard(Integer accountId, Integer cardId);
 }

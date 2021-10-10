@@ -22,7 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-@FixMethodOrder(MethodSorters.JVM)
 @TestPropertySource("/application-test.properties")
 public class CardControllerTest {
     @Autowired
@@ -60,6 +59,8 @@ public class CardControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(utils.getJsonAsString("response/GetMoneyBalanceGood.json")));
+
+
     }
 
     @Test
@@ -76,6 +77,10 @@ public class CardControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(utils.getJsonAsString("response/CreateCardGood.json")));
+
+        mockMvc.perform(delete("/api/accounts/1/cards/6"))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -101,6 +106,11 @@ public class CardControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(utils.getJsonAsString("response/PushMoneyToCardGood.json")));
+
+        mockMvc.perform(patch("/api/cards/1")
+                .queryParam("money", "-1000"))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test

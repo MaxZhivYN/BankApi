@@ -46,16 +46,12 @@ public class CardDAO implements ICardDAO {
     }
 
     @Override
-    public void pushMoneyToCardAndAccount(Double money, CardEntity card) {
+    public void pushMoney(Double money, CardEntity card) {
         try (final Session session = dbConfiguration.getFactory().openSession()) {
             card.setBalance(card.getBalance() + money);
 
             session.beginTransaction();
             session.update(card);
-
-            AccountEntity account = card.getAccount();
-            account.setBalance(account.getBalance() + money);
-            session.update(account);
 
             session.getTransaction().commit();
         }
@@ -83,6 +79,16 @@ public class CardDAO implements ICardDAO {
             session.getTransaction().commit();
 
             return card;
+        }
+    }
+
+    @Override
+    public void deleteCard(CardEntity card) {
+        try (final Session session = dbConfiguration.getFactory().openSession()) {
+            session.beginTransaction();
+            session.delete(card);
+
+            session.getTransaction().commit();
         }
     }
 

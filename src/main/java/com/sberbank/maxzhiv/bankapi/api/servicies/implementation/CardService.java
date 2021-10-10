@@ -1,9 +1,9 @@
 package com.sberbank.maxzhiv.bankapi.api.servicies.implementation;
 
+import com.sberbank.maxzhiv.bankapi.api.dto.AckDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardMoneyDto;
 import com.sberbank.maxzhiv.bankapi.api.exceptions.BadRequestException;
-import com.sberbank.maxzhiv.bankapi.api.exceptions.NotFoundException;
 import com.sberbank.maxzhiv.bankapi.api.factories.CardDtoFactory;
 import com.sberbank.maxzhiv.bankapi.api.servicies.interfaces.ICardService;
 import com.sberbank.maxzhiv.bankapi.store.dao.interfaces.IAccountDAO;
@@ -48,12 +48,14 @@ public class CardService implements ICardService {
 
     @Override
     public CardDto pushMoneyToCard(Integer cardId, Double money) {
-        if (money < 0)
-            throw new BadRequestException("money need to be > 0");
-
         CardEntity card = cardDAO.findCardByIdOrThrowException(cardId);
 
-        cardDAO.pushMoneyToCardAndAccount(money, card);
+        if (card.getBalance() + money < 0) {
+            throw new BadRequestException("Insufficient funds on card");
+        }
+
+        cardDAO.pushMoney(money, card);
+        accountDAO.pushMoney(money, card.getAccount());
 
         return cardDtoFactory.makeCardDto(card);
     }
@@ -63,5 +65,17 @@ public class CardService implements ICardService {
         CardEntity card = cardDAO.findCardByIdOrThrowException(cardId);
 
         return cardDtoFactory.makeCardMoneyDto(card);
+    }
+
+    @Override
+    public AckDto deleteCard(Integer accountId, Integer cardId) {
+        CardEntity card = cardDAO.findCardByIdOrThrowException(cardId);
+
+        if (!card.getAccount().getId().equals(accountId))
+            throw new BadRequestException("No card this card on account");
+
+        cardDAO.deleteCard(card);
+
+        return AckDto.makeDefault(true);
     }
 }
