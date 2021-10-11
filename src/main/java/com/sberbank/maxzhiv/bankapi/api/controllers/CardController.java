@@ -30,21 +30,23 @@ public class CardController {
         return cardService.getCardByAccountId(accountId);
     }
 
+    // TODO: реализовать создание карты с автогенерацией number
     @PostMapping(CREATE_CARD)
     public CardDto createCard(
-            @PathVariable("account_id") Integer accountId,
-            @RequestParam(name = "name") String cardName) {
+            @PathVariable("account_id") Integer accountId) {
 
-        return cardService.createCard(accountId, cardName);
+        return cardService.createCard(accountId);
     }
 
-    @PatchMapping(PUSH_MONEY_TO_CARD)
-    public CardDto pushMoneyToCard(
-            @PathVariable("card_id") Integer cardId,
-            @RequestParam(name = "money") Double money) {
 
-        return cardService.pushMoneyToCard(cardId, money);
-    }
+    // TODO: реализовать перевод с карты на карту
+//    @PatchMapping(PUSH_MONEY_TO_CARD)
+//    public CardDto pushMoneyToCard(
+//            @PathVariable("card_id") Integer cardId,
+//            @RequestParam(name = "money") Double money) {
+//
+//        return cardService.pushMoneyToCard(cardId, money);
+//    }
 
     @GetMapping(GET_MONEY_BALANCE)
     public CardMoneyDto getMoneyBalance(

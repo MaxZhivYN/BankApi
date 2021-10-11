@@ -1,5 +1,6 @@
-package com.sberbank.maxzhiv.bankapi.api.exceptions;
+package com.sberbank.maxzhiv.bankapi.api.controllers;
 
+import com.sberbank.maxzhiv.bankapi.api.exceptions.ErrorDto;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

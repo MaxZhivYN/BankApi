@@ -13,6 +13,7 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 @Component
@@ -48,7 +49,7 @@ public class CardDAO implements ICardDAO {
     @Override
     public void pushMoney(Double money, CardEntity card) {
         try (final Session session = dbConfiguration.getFactory().openSession()) {
-            card.setBalance(card.getBalance() + money);
+            //card.setBalance(card.getBalance() + money);
 
             session.beginTransaction();
             session.update(card);
@@ -70,8 +71,8 @@ public class CardDAO implements ICardDAO {
 
             CardEntity card = CardEntity.builder()
                     .account(account)
-                    .name(name)
-                    .balance(0D)
+                    //.name(name)
+                    //.balance(0D)
                     .build();
 
             session.beginTransaction();

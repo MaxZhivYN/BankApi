@@ -11,5 +11,6 @@
 
         <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.CardEntity"/>
         <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.AccountEntity"/>
+        <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.UserEntity"/>
     </session-factory>
 </hibernate-configuration>

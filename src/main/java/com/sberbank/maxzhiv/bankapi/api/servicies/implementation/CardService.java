@@ -4,7 +4,6 @@ import com.sberbank.maxzhiv.bankapi.api.dto.AckDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardMoneyDto;
 import com.sberbank.maxzhiv.bankapi.api.exceptions.BadRequestException;
-import com.sberbank.maxzhiv.bankapi.api.factories.CardDtoFactory;
 import com.sberbank.maxzhiv.bankapi.api.servicies.interfaces.ICardService;
 import com.sberbank.maxzhiv.bankapi.store.dao.interfaces.IAccountDAO;
 import com.sberbank.maxzhiv.bankapi.store.dao.interfaces.ICardDAO;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class CardService implements ICardService {
-    private final CardDtoFactory cardDtoFactory;
     private final ICardDAO cardDAO;
     private final IAccountDAO accountDAO;
 
@@ -33,38 +31,38 @@ public class CardService implements ICardService {
         List<CardEntity> cardEntities = cardDAO.getAllCardsByAccountId(accountId);
 
         return cardEntities.stream()
-                .map(cardDtoFactory::makeCardDto)
+                .map(this::makeCardDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public CardDto createCard(Integer accountId, String cardName) {
+    public CardDto createCard(Integer accountId) {
         AccountEntity account = accountDAO.getAccountByIdOrThrowException(accountId);
 
         CardEntity card = cardDAO.createCard(account, cardName);
 
-        return cardDtoFactory.makeCardDto(card);
+        return makeCardDto(card);
     }
 
     @Override
     public CardDto pushMoneyToCard(Integer cardId, Double money) {
         CardEntity card = cardDAO.findCardByIdOrThrowException(cardId);
 
-        if (card.getBalance() + money < 0) {
-            throw new BadRequestException("Insufficient funds on card");
-        }
+//        if (card.getBalance() + money < 0) {
+//            throw new BadRequestException("Insufficient funds on card");
+//        }
 
         cardDAO.pushMoney(money, card);
         accountDAO.pushMoney(money, card.getAccount());
 
-        return cardDtoFactory.makeCardDto(card);
+        return makeCardDto(card);
     }
 
     @Override
     public CardMoneyDto getMoneyBalance(Integer cardId) {
         CardEntity card = cardDAO.findCardByIdOrThrowException(cardId);
 
-        return cardDtoFactory.makeCardMoneyDto(card);
+        return makeCardMoneyDto(card.getAccount());
     }
 
     @Override
@@ -77,5 +75,18 @@ public class CardService implements ICardService {
         cardDAO.deleteCard(card);
 
         return AckDto.makeDefault(true);
+    }
+
+    private CardDto makeCardDto(CardEntity cardEntity) {
+        return CardDto.builder()
+                .id(cardEntity.getId())
+                .number(cardEntity.getNumber())
+                .build();
+    }
+
+    private CardMoneyDto makeCardMoneyDto(AccountEntity accountEntity) {
+        return CardMoneyDto.builder()
+                .money(accountEntity.getBalance())
+                .build();
     }
 }

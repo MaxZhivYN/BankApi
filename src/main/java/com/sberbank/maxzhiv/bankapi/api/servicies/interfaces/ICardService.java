@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ICardService {
     List<CardDto> getCardByAccountId(Integer accountId);
-    CardDto createCard(Integer accountId, String cardName);
+    CardDto createCard(Integer accountId);
     CardDto pushMoneyToCard(Integer cardId, Double money);
     CardMoneyDto getMoneyBalance(Integer cardId);
     AckDto deleteCard(Integer accountId, Integer cardId);
