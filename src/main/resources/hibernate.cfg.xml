@@ -9,7 +9,7 @@
         <property name="show_sql">true</property>
         <property name="hibernate.enable_lazy_load_no_trans">true</property>
 
-        <mapping resource="/com.sberbank.maxzhiv.bankapi.store.entities/AccountEntity.hbm.xml" />
-        <mapping resource="/com.sberbank.maxzhiv.bankapi.store.entities/CardEntity.hbm.xml" />
+        <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.CardEntity"/>
+        <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.AccountEntity"/>
     </session-factory>
 </hibernate-configuration>
