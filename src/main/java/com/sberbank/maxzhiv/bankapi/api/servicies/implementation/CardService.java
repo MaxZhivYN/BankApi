@@ -12,7 +12,11 @@ import com.sberbank.maxzhiv.bankapi.store.entities.CardEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
+import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -39,7 +43,13 @@ public class CardService implements ICardService {
     public CardDto createCard(Integer accountId) {
         AccountEntity account = accountDAO.getAccountByIdOrThrowException(accountId);
 
-        CardEntity card = cardDAO.createCard(account, cardName);
+        if (Objects.nonNull(account.getCard())) {
+            throw new BadRequestException("Account already has card");
+        }
+
+        String cardNumber = generateUniqueCardNumber();
+
+        CardEntity card = cardDAO.createCard(account, cardNumber);
 
         return makeCardDto(card);
     }
@@ -88,5 +98,42 @@ public class CardService implements ICardService {
         return CardMoneyDto.builder()
                 .money(accountEntity.getBalance())
                 .build();
+    }
+
+    private String generateUniqueCardNumber() {
+        SortedSet<String> cardNumbers = cardDAO.getCardNumbers();
+
+        long temp = 0;
+        for (String cardNumber : cardNumbers) {
+            long cardNumberLong = Long.parseLong(cardNumber);
+
+            long difference = cardNumberLong - temp;
+
+            if (difference > 1) {
+                return generateStringNumberFromLong(temp + 1);
+            }
+
+            temp = cardNumberLong;
+        }
+
+        if (temp == 10000000000000000L) {
+            throw new RuntimeException("No cards enough");
+        }
+
+        return "0000000000000001";
+    }
+
+    private String generateStringNumberFromLong(long number) {
+        String stringNumber = String.valueOf(number);
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < 16 - stringNumber.length(); ++i) {
+            stringBuilder.append('0');
+        }
+
+        stringBuilder.append(number);
+
+        return new String(stringBuilder);
     }
 }

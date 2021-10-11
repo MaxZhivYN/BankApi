@@ -30,7 +30,6 @@ public class CardController {
         return cardService.getCardByAccountId(accountId);
     }
 
-    // TODO: реализовать создание карты с автогенерацией number
     @PostMapping(CREATE_CARD)
     public CardDto createCard(
             @PathVariable("account_id") Integer accountId) {

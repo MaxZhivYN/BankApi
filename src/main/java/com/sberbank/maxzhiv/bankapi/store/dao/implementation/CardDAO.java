@@ -15,11 +15,16 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class CardDAO implements ICardDAO {
     private final DBConfiguration dbConfiguration;
+
+
 
     @Override
     public CardEntity findCardByIdOrThrowException(Integer cardId) {
@@ -59,20 +64,11 @@ public class CardDAO implements ICardDAO {
     }
 
     @Override
-    public CardEntity createCard(AccountEntity account, String name) {
+    public CardEntity createCard(AccountEntity account, String number) {
         try (final Session session = dbConfiguration.getFactory().openSession()) {
-            Query<CardEntity> query = session.createQuery("from CardEntity as card where card.name = :cardName and card.account.id = :accountId", CardEntity.class);
-            query.setParameter("cardName", name);
-            query.setParameter("accountId", account.getId());
-
-            if (!query.list().isEmpty()) {
-                throw new BadRequestException(String.format("name \"%s\" already used in this account", name));
-            }
-
             CardEntity card = CardEntity.builder()
                     .account(account)
-                    //.name(name)
-                    //.balance(0D)
+                    .number(number)
                     .build();
 
             session.beginTransaction();
@@ -90,6 +86,21 @@ public class CardDAO implements ICardDAO {
             session.delete(card);
 
             session.getTransaction().commit();
+        }
+    }
+
+    @Override
+    public SortedSet<String> getCardNumbers() {
+        try (final Session session = dbConfiguration.getFactory().openSession()) {
+            Query<CardEntity> query = session.createQuery("from CardEntity", CardEntity.class);
+
+            SortedSet<String> cardNumbers = query.list().stream()
+                    .map(CardEntity::getNumber)
+                    .collect(Collectors.toCollection(TreeSet::new));
+
+            cardNumbers.add("10000000000000000");
+
+            return cardNumbers;
         }
     }
 
