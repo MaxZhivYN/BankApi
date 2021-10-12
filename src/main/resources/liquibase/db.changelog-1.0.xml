@@ -3,43 +3,50 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <changeSet id="1.0.0" author="maxzhivyn">
+
+    <changeSet id="1.0.0" author="max">
         <createTable tableName="User">
             <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 
-            <column name="name" type="VARCHAR(100)">
-                <constraints nullable="false" unique="false"/>
+            <column name="username" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
             </column>
 
-            <column name="patronymic" type="VARCHAR(100)">
-                <constraints nullable="false" unique="false"/>
+            <column name="first_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
             </column>
 
-            <column name="surname" type="VARCHAR(100)">
-                <constraints nullable="false" unique="false"/>
+            <column name="last_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
             </column>
 
             <column name="email" type="VARCHAR(255)">
                 <constraints nullable="false" unique="true"/>
             </column>
 
-            <column name="email" type="VARCHAR(255)">
-                <constraints nullable="false" unique="true"/>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
             </column>
 
+            <column name="created" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated" type="TIMESTAMP" defaultValue="CURRENT_TIMESTAMP()">
+                <constraints nullable="false"/>
+            </column>
 
             <column name="status" type="VARCHAR(25)" defaultValue="ACTIVE">
                 <constraints nullable="false"/>
             </column>
-
         </createTable>
     </changeSet>
 
-    <changeSet id="1.0.1" author="eugene.suleimanov">
-        <createTable tableName="roles">
-            <column name="id" type="BIGINT" autoIncrement="true">
+    <changeSet id="1.0.1" author="max">
+        <createTable tableName="Role">
+            <column name="id" type="integer" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 
@@ -61,17 +68,17 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="1.0.2" author="eugene.suleimanov">
+    <changeSet id="1.0.2" author="max">
         <createTable tableName="user_roles">
-            <column name="user_id" type="BIGINT">
+            <column name="user_id" type="integer">
             </column>
 
-            <column name="role_id" type="BIGINT">
+            <column name="role_id" type="integer">
             </column>
         </createTable>
     </changeSet>
 
-    <changeSet id="1.0.3" author="eugene.suleimanov">
+    <changeSet id="1.0.3" author="max">
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="user_roles"
                                  constraintName="fk_user_roles_user"
