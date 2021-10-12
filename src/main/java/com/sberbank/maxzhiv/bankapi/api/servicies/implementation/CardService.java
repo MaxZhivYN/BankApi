@@ -3,7 +3,9 @@ package com.sberbank.maxzhiv.bankapi.api.servicies.implementation;
 import com.sberbank.maxzhiv.bankapi.api.dto.AckDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardMoneyDto;
+import com.sberbank.maxzhiv.bankapi.api.dto.TransferDto;
 import com.sberbank.maxzhiv.bankapi.api.exceptions.BadRequestException;
+import com.sberbank.maxzhiv.bankapi.api.exceptions.NoMoneyException;
 import com.sberbank.maxzhiv.bankapi.api.servicies.interfaces.ICardService;
 import com.sberbank.maxzhiv.bankapi.store.dao.interfaces.IAccountDAO;
 import com.sberbank.maxzhiv.bankapi.store.dao.interfaces.ICardDAO;
@@ -12,11 +14,9 @@ import com.sberbank.maxzhiv.bankapi.store.entities.CardEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -55,17 +55,39 @@ public class CardService implements ICardService {
     }
 
     @Override
-    public CardDto pushMoneyToCard(Integer cardId, Double money) {
-        CardEntity card = cardDAO.findCardByIdOrThrowException(cardId);
+    public AckDto transfer(TransferDto transferDto) {
+        String fromCardNumber = transferDto.getFromCardNumber();
+        String toCardNumber = transferDto.getToCardNumber();
+        Double money = transferDto.getMoney();
 
-//        if (card.getBalance() + money < 0) {
-//            throw new BadRequestException("Insufficient funds on card");
-//        }
+        if (Objects.isNull(fromCardNumber)) {
+            throw new BadRequestException("'fromCardNumber' need to be not empty");
+        }
 
-        cardDAO.pushMoney(money, card);
-        accountDAO.pushMoney(money, card.getAccount());
+        if (Objects.isNull(toCardNumber)) {
+            throw new BadRequestException("'toCardNumber' need to be not empty");
+        }
 
-        return makeCardDto(card);
+        if (Objects.isNull(money)) {
+            throw new BadRequestException("'money' need to be not empty");
+        }
+
+        if (money <= 0) {
+            throw new BadRequestException("Money need to be > 0");
+        }
+
+        CardEntity fromCard = cardDAO.findCardByNumberOrThrowException(transferDto.getFromCardNumber());
+        CardEntity toCard = cardDAO.findCardByNumberOrThrowException(transferDto.getToCardNumber());
+
+        double fromBalance = fromCard.getAccount().getBalance();
+        if (fromBalance - money < 0) {
+            throw new NoMoneyException(String.format("No money enough on card '%s'", fromCardNumber));
+        }
+
+        accountDAO.pushMoney(-money, fromCard.getAccount());
+        accountDAO.pushMoney(money, toCard.getAccount());
+
+        return AckDto.makeDefault(true);
     }
 
     @Override

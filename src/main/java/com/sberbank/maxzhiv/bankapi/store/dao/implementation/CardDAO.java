@@ -52,18 +52,6 @@ public class CardDAO implements ICardDAO {
     }
 
     @Override
-    public void pushMoney(Double money, CardEntity card) {
-        try (final Session session = dbConfiguration.getFactory().openSession()) {
-            //card.setBalance(card.getBalance() + money);
-
-            session.beginTransaction();
-            session.update(card);
-
-            session.getTransaction().commit();
-        }
-    }
-
-    @Override
     public CardEntity createCard(AccountEntity account, String number) {
         try (final Session session = dbConfiguration.getFactory().openSession()) {
             CardEntity card = CardEntity.builder()
@@ -101,6 +89,20 @@ public class CardDAO implements ICardDAO {
             cardNumbers.add("10000000000000000");
 
             return cardNumbers;
+        }
+    }
+
+    @Override
+    public CardEntity findCardByNumberOrThrowException(String number) {
+        try (final Session session = dbConfiguration.getFactory().openSession()) {
+            Query<CardEntity> query = session.createQuery("from CardEntity as card where card.number = :number", CardEntity.class);
+
+            query.setParameter("number", number);
+
+            if (query.list().isEmpty())
+                throw new NotFoundException(String.format("Card with number %s not found", number));
+
+            return query.list().get(0);
         }
     }
 

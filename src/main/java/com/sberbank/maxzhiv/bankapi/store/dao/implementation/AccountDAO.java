@@ -45,6 +45,9 @@ public class AccountDAO implements IAccountDAO {
             session.update(account);
 
             session.getTransaction().commit();
+        } catch (Exception e) {
+            dbConfiguration.getFactory().getCurrentSession()
+                    .getTransaction().rollback();
         }
     }
 

@@ -3,12 +3,11 @@ package com.sberbank.maxzhiv.bankapi.api.controllers;
 import com.sberbank.maxzhiv.bankapi.api.dto.AckDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardMoneyDto;
+import com.sberbank.maxzhiv.bankapi.api.dto.TransferDto;
 import com.sberbank.maxzhiv.bankapi.api.servicies.interfaces.ICardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.transaction.Transactional;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -19,7 +18,7 @@ public class CardController {
 
     private static final String GET_CARDS_BY_ACCOUNT_ID = "accounts/{account_id}/cards";
     private static final String CREATE_CARD = "accounts/{account_id}/cards";
-    private static final String PUSH_MONEY_TO_CARD = "cards/{card_id}";
+    private static final String TRANSFER_FROM_CARD_TO_CARD = "cards";
     private static final String GET_MONEY_BALANCE = "cards/{card_id}";
     private static final String DELETE_CARD = "accounts/{account_id}/cards/{card_id}";
 
@@ -37,15 +36,12 @@ public class CardController {
         return cardService.createCard(accountId);
     }
 
+    @PatchMapping(TRANSFER_FROM_CARD_TO_CARD)
+    public AckDto transfer(
+            @RequestBody TransferDto transferDto) {
 
-    // TODO: реализовать перевод с карты на карту
-//    @PatchMapping(PUSH_MONEY_TO_CARD)
-//    public CardDto pushMoneyToCard(
-//            @PathVariable("card_id") Integer cardId,
-//            @RequestParam(name = "money") Double money) {
-//
-//        return cardService.pushMoneyToCard(cardId, money);
-//    }
+        return cardService.transfer(transferDto);
+    }
 
     @GetMapping(GET_MONEY_BALANCE)
     public CardMoneyDto getMoneyBalance(
