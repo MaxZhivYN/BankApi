@@ -87,7 +87,7 @@ public class CardService implements ICardService {
         accountDAO.pushMoney(-money, fromCard.getAccount());
         accountDAO.pushMoney(money, toCard.getAccount());
 
-        return AckDto.makeDefault(true);
+        return AckDto.makeDefault(true, "successful");
     }
 
     @Override
@@ -98,15 +98,16 @@ public class CardService implements ICardService {
     }
 
     @Override
-    public AckDto deleteCard(Integer accountId, Integer cardId) {
-        CardEntity card = cardDAO.findCardByIdOrThrowException(cardId);
+    public AckDto deleteCard(Integer accountId) {
+        AccountEntity account = accountDAO.getAccountByIdOrThrowException(accountId);
+        CardEntity card = account.getCard();
 
-        if (!card.getAccount().getId().equals(accountId))
-            throw new BadRequestException("No card this card on account");
+        if (Objects.isNull(card))
+            throw new BadRequestException("No card on this account");
 
         cardDAO.deleteCard(card);
 
-        return AckDto.makeDefault(true);
+        return AckDto.makeDefault(true, "successful");
     }
 
     private CardDto makeCardDto(CardEntity cardEntity) {

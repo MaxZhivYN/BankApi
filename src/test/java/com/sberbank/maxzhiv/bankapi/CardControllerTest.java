@@ -10,6 +10,7 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -43,7 +44,12 @@ public class CardControllerTest {
         mockMvc.perform(get("/api/accounts/1/cards"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(utils.getJsonAsString("response/GetCardByAccountIdGood.json")));
+                .andExpect(content().json("[\n" +
+                        "    {\n" +
+                        "        \"id\": 1,\n" +
+                        "        \"number\": \"1111111111111111\"\n" +
+                        "    }\n" +
+                        "]"));
     }
 
     @Test
@@ -58,7 +64,9 @@ public class CardControllerTest {
         mockMvc.perform(get("/api/cards/1"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(utils.getJsonAsString("response/GetMoneyBalanceGood.json")));
+                .andExpect(content().json("{\n" +
+                        "    \"money\": 10000.0\n" +
+                        "}"));
 
 
     }
@@ -72,60 +80,52 @@ public class CardControllerTest {
 
     @Test
     public void createCardGoodTest() throws Exception {
-        mockMvc.perform(post("/api/accounts/1/cards")
-                        .queryParam("name", "Valera's card"))
+        mockMvc.perform(post("/api/accounts/4/cards"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(utils.getJsonAsString("response/CreateCardGood.json")));
+                .andExpect(content().json("{\n" +
+                        "    \"id\": 4,\n" +
+                        "    \"number\": \"0000000000000001\"\n" +
+                        "}"));
 
-        mockMvc.perform(delete("/api/accounts/1/cards/6"))
+        mockMvc.perform(delete("/api/accounts/4/cards"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
     public void createCardNotFoundTest() throws Exception {
-        mockMvc.perform(post("/api/accounts/0/cards")
-                        .queryParam("name", "Valera's card"))
+        mockMvc.perform(post("/api/accounts/0/cards"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void createCardBadRequestTest() throws Exception {
-        mockMvc.perform(post("/api/accounts/0/cards")
-                        .queryParam("name1", "Valera's card"))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void pushMoneyToCardGoodTest() throws Exception {
-        mockMvc.perform(patch("/api/cards/1")
-                        .queryParam("money", "1000"))
+    public void transferMoneyTest() throws Exception {
+        mockMvc.perform(patch("/api/cards")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\n" +
+                                "    \"fromCardNumber\": \"1111111111111111\",\n" +
+                                "    \"toCardNumber\": \"2222222222222222\",\n" +
+                                "    \"money\": 1000\n" +
+                                "}"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(utils.getJsonAsString("response/PushMoneyToCardGood.json")));
+                .andExpect(content().json("{\n" +
+                        "    \"answer\": true\n" +
+                        "}"));
 
-        mockMvc.perform(patch("/api/cards/1")
-                .queryParam("money", "-1000"))
+        mockMvc.perform(patch("/api/cards")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\n" +
+                        "    \"fromCardNumber\": \"2222222222222222\",\n" +
+                        "    \"toCardNumber\": \"1111111111111111\",\n" +
+                        "    \"money\": 1000\n" +
+                        "}"))
                 .andDo(print())
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void pushMoneyToCardNotFoundTest() throws Exception {
-        mockMvc.perform(patch("/api/cards/0")
-                        .queryParam("money", "1000"))
-                .andDo(print())
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void pushMoneyToCardBadRequestTest() throws Exception {
-        mockMvc.perform(patch("/api/cards/0")
-                        .queryParam("money1", "1000"))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\n" +
+                        "    \"answer\": true\n" +
+                        "}"));
     }
 }

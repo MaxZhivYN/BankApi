@@ -20,7 +20,7 @@ public class CardController {
     private static final String CREATE_CARD = "accounts/{account_id}/cards";
     private static final String TRANSFER_FROM_CARD_TO_CARD = "cards";
     private static final String GET_MONEY_BALANCE = "cards/{card_id}";
-    private static final String DELETE_CARD = "accounts/{account_id}/cards/{card_id}";
+    private static final String DELETE_CARD = "accounts/{account_id}/cards";
 
     @GetMapping(GET_CARDS_BY_ACCOUNT_ID)
     public List<CardDto> getCardByAccountId(
@@ -52,12 +52,8 @@ public class CardController {
 
     @DeleteMapping(DELETE_CARD)
     public AckDto deleteCard(
-            @PathVariable("account_id") Integer accountId,
-            @PathVariable("card_id") Integer cardId) {
+            @PathVariable("account_id") Integer accountId) {
 
-        return cardService.deleteCard(accountId, cardId);
+        return cardService.deleteCard(accountId);
     }
-
-
-
 }

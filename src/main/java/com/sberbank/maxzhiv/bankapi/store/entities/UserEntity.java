@@ -9,11 +9,16 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 @Getter
 @Setter
 @Entity
 @Table(name = "User")
-public class UserEntity extends BaseEntity {
+public class UserEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Integer id;
 
     @Column(name = "username")
     private String username;
@@ -27,12 +32,9 @@ public class UserEntity extends BaseEntity {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "password")
-    private String password;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "user_roles",
+            name = "user_role",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
     )

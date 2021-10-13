@@ -5,6 +5,7 @@ import com.sberbank.maxzhiv.bankapi.store.dao.DBConfiguration;
 import com.sberbank.maxzhiv.bankapi.store.dao.interfaces.IAccountDAO;
 import com.sberbank.maxzhiv.bankapi.store.entities.AccountEntity;
 import com.sberbank.maxzhiv.bankapi.store.entities.CardEntity;
+import com.sberbank.maxzhiv.bankapi.store.entities.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -25,7 +26,7 @@ public class AccountDAO implements IAccountDAO {
             if (query.list().isEmpty())
                 throw new NotFoundException(String.format("Account with id %s not found", accountId));
 
-            return session.get(AccountEntity.class, accountId);
+            return query.getSingleResult();
         }
     }
 
@@ -48,6 +49,22 @@ public class AccountDAO implements IAccountDAO {
         } catch (Exception e) {
             dbConfiguration.getFactory().getCurrentSession()
                     .getTransaction().rollback();
+        }
+    }
+
+    @Override
+    public AccountEntity create(UserEntity user) {
+        try (final Session session = dbConfiguration.getFactory().openSession()) {
+            AccountEntity account = AccountEntity.builder()
+                    .user(user)
+                    .balance(0D)
+                    .build();
+
+            session.beginTransaction();
+            session.save(account);
+            session.getTransaction().commit();
+
+            return account;
         }
     }
 

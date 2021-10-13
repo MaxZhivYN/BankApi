@@ -1,11 +1,12 @@
 package com.sberbank.maxzhiv.bankapi.api.controllers;
 
+import com.sberbank.maxzhiv.bankapi.api.dto.AccountCreateDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.AccountDto;
 import com.sberbank.maxzhiv.bankapi.api.servicies.interfaces.IAccountService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.persistence.criteria.CriteriaBuilder;
 
 @RequiredArgsConstructor
 @RestController
@@ -16,10 +17,10 @@ public class AccountController {
     private static final String CREATE_ACCOUNT = "accounts";
 
 
-    // TODO: реализовать создание счета с передачей аккаутна
     @PostMapping(CREATE_ACCOUNT)
-    public AccountDto create() {
-        return null;
+    public AccountDto create(
+            @RequestParam("userId") Integer userId) {
+        return accountService.create(userId);
     }
 
 }

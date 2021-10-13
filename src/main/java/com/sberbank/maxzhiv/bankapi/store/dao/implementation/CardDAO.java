@@ -25,7 +25,6 @@ public class CardDAO implements ICardDAO {
     private final DBConfiguration dbConfiguration;
 
 
-
     @Override
     public CardEntity findCardByIdOrThrowException(Integer cardId) {
         try (final Session session = dbConfiguration.getFactory().openSession()) {
@@ -36,7 +35,7 @@ public class CardDAO implements ICardDAO {
             if (query.list().isEmpty())
                 throw new NotFoundException(String.format("Card with id %s not found", cardId));
 
-            return session.get(CardEntity.class, cardId);
+            return query.getSingleResult();
         }
     }
 
@@ -102,7 +101,7 @@ public class CardDAO implements ICardDAO {
             if (query.list().isEmpty())
                 throw new NotFoundException(String.format("Card with number %s not found", number));
 
-            return query.list().get(0);
+            return query.getSingleResult();
         }
     }
 

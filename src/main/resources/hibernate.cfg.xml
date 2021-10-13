@@ -9,8 +9,13 @@
         <property name="show_sql">true</property>
         <property name="hibernate.enable_lazy_load_no_trans">true</property>
 
-        <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.CardEntity"/>
+
         <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.AccountEntity"/>
+        <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.CardEntity"/>
         <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.UserEntity"/>
+        <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.RoleEntity"/>
+        <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.BankEntity"/>
+        <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.PartnerEntity"/>
+
     </session-factory>
 </hibernate-configuration>

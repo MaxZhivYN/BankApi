@@ -15,5 +15,5 @@ public interface ICardService {
     CardDto createCard(Integer accountId);
     AckDto transfer(TransferDto transferDto);
     CardMoneyDto getMoneyBalance(Integer cardId);
-    AckDto deleteCard(Integer accountId, Integer cardId);
+    AckDto deleteCard(Integer accountId);
 }

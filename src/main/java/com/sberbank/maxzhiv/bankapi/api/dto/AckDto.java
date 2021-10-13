@@ -12,9 +12,12 @@ import lombok.NoArgsConstructor;
 public class AckDto {
     private Boolean answer;
 
-    public static AckDto makeDefault(Boolean answer) {
+    private String description;
+
+    public static AckDto makeDefault(Boolean answer, String description) {
         return AckDto.builder()
                 .answer(answer)
+                .description(description)
                 .build();
     }
 }
