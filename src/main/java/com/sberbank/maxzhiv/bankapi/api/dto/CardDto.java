@@ -13,4 +13,6 @@ public class CardDto {
     private Integer id;
 
     private String number;
+
+    private String status;
 }

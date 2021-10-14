@@ -40,13 +40,17 @@ public class CardDAO implements ICardDAO {
     }
 
     @Override
-    public List<CardEntity> getAllCardsByAccountId(Integer accountId) {
+    public CardEntity getCardByAccountIdOrThrowException(Integer accountId) {
         try (final Session session = dbConfiguration.getFactory().openSession()) {
             Query<CardEntity> query = session.createQuery("from CardEntity as card where card.account.id = :accountId", CardEntity.class);
 
             query.setParameter("accountId", accountId);
 
-            return query.list();
+            if (query.list().isEmpty()) {
+                throw new NotFoundException("No card on this account");
+            }
+
+            return query.getSingleResult();
         }
     }
 

@@ -8,7 +8,7 @@ import java.util.SortedSet;
 
 public interface ICardDAO {
     CardEntity findCardByIdOrThrowException(Integer cardId);
-    List<CardEntity> getAllCardsByAccountId(Integer accountId);
+    CardEntity getCardByAccountIdOrThrowException(Integer accountId);
     CardEntity createCard(AccountEntity account, String number);
     void deleteCard(CardEntity card);
     SortedSet<String> getCardNumbers();

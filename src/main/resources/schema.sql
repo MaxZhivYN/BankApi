@@ -1,3 +1,25 @@
+CREATE TABLE IF NOT EXISTS User (
+                                    id INTEGER AUTO_INCREMENT primary key,
+                                    username VARCHAR(255) NOT NULL UNIQUE,
+                                    firstname VARCHAR(100) NOT NULL,
+                                    lastname VARCHAR(100) NOT NULL,
+                                    email VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS Account (
+                                    id INTEGER AUTO_INCREMENT primary key,
+                                    balance DOUBLE NOT NULL,
+                                    user_id INTEGER,
+                                    foreign key (user_id) references User(id)
+);
+
+CREATE TABLE IF NOT EXISTS Card (
+                                    id INTEGER AUTO_INCREMENT primary key,
+                                    number VARCHAR(16) NOT NULL UNIQUE,
+                                    account_id INTEGER,
+                                    foreign key (account_id) references Account(id)
+);
+
 CREATE TABLE IF NOT EXISTS Bank (
                                     id INTEGER AUTO_INCREMENT PRIMARY KEY,
                                     name VARCHAR(100) NOT NULL UNIQUE
@@ -26,30 +48,10 @@ CREATE TABLE IF NOT EXISTS Operation (
                                     id INTEGER AUTO_INCREMENT primary key,
                                     operation_type_id INTEGER,
                                     operation_status_id INTEGER,
+                                    card_id INTEGER,
                                     foreign key (operation_type_id) references OperationType(id),
-                                    foreign key (operation_status_id) references OperationStatus(id)
-);
-
-CREATE TABLE IF NOT EXISTS User (
-                                    id INTEGER AUTO_INCREMENT primary key,
-                                    username VARCHAR(255) NOT NULL UNIQUE,
-                                    firstname VARCHAR(100) NOT NULL,
-                                    lastname VARCHAR(100) NOT NULL,
-                                    email VARCHAR(100) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS Account (
-                                    id INTEGER AUTO_INCREMENT primary key,
-                                    balance DOUBLE NOT NULL,
-                                    user_id INTEGER,
-                                    foreign key (user_id) references User(id)
-);
-
-CREATE TABLE IF NOT EXISTS Card (
-                                    id INTEGER AUTO_INCREMENT primary key,
-                                    number VARCHAR(16) NOT NULL UNIQUE,
-                                    account_id INTEGER,
-                                    foreign key (account_id) references Account(id)
+                                    foreign key (operation_status_id) references OperationStatus(id),
+                                    foreign key (card_id) references Card(id)
 );
 
 CREATE TABLE IF NOT EXISTS Role (
@@ -64,8 +66,8 @@ CREATE TABLE IF NOT EXISTS user_role (
                                     foreign key (role_id) references Role(id)
 );
 
-INSERT INTO OperationType (name) VALUES ('TRANSFER');
 INSERT INTO OperationType (name) VALUES ('CREATE');
+INSERT INTO OperationType (name) VALUES ('TRANSFER');
 
 INSERT INTO OperationStatus (name) VALUES ('SUCCESS');
 INSERT INTO OperationStatus (name) VALUES ('AWAITING');
@@ -92,3 +94,9 @@ INSERT INTO Account (balance, user_id) VALUES (50000, 2);
 INSERT INTO Card (number, account_id) VALUES ('1111111111111111', 1);
 INSERT INTO Card (number, account_id) VALUES ('2222222222222222', 2);
 INSERT INTO Card (number, account_id) VALUES ('3333333333333333', 3);
+INSERT INTO Card (number, account_id) VALUES ('4444444444444444', 4);
+
+INSERT INTO Operation (operation_type_id, operation_status_id, card_id) VALUES (1, 1, 1);
+INSERT INTO Operation (operation_type_id, operation_status_id, card_id) VALUES (1, 1, 2);
+INSERT INTO Operation (operation_type_id, operation_status_id, card_id) VALUES (1, 1, 3);
+INSERT INTO Operation (operation_type_id, operation_status_id, card_id) VALUES (1, 2, 4);

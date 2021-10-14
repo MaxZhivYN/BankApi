@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 public interface ICardService {
-    List<CardDto> getCardByAccountId(Integer accountId);
+    CardDto getCardByAccountId(Integer accountId);
     CardDto createCard(Integer accountId);
     AckDto transfer(TransferDto transferDto);
     CardMoneyDto getMoneyBalance(Integer cardId);

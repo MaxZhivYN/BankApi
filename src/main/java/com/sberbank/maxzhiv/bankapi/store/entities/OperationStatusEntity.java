@@ -24,7 +24,6 @@ public class OperationStatusEntity {
     private String name;
 
     @Builder.Default
-    @OneToMany
-    @JoinColumn(name = "operation_status_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "operationStatus")
     private List<OperationEntity> operations = new ArrayList<>();
 }

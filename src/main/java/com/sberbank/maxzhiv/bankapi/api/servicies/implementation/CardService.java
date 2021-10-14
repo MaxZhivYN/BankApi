@@ -5,17 +5,22 @@ import com.sberbank.maxzhiv.bankapi.api.dto.CardDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.CardMoneyDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.TransferDto;
 import com.sberbank.maxzhiv.bankapi.api.exceptions.BadRequestException;
+import com.sberbank.maxzhiv.bankapi.api.exceptions.CardNotActiveException;
 import com.sberbank.maxzhiv.bankapi.api.exceptions.NoMoneyException;
 import com.sberbank.maxzhiv.bankapi.api.servicies.interfaces.ICardService;
 import com.sberbank.maxzhiv.bankapi.store.dao.interfaces.IAccountDAO;
 import com.sberbank.maxzhiv.bankapi.store.dao.interfaces.ICardDAO;
+import com.sberbank.maxzhiv.bankapi.store.dao.interfaces.IOperationDAO;
 import com.sberbank.maxzhiv.bankapi.store.entities.AccountEntity;
 import com.sberbank.maxzhiv.bankapi.store.entities.CardEntity;
+import com.sberbank.maxzhiv.bankapi.store.entities.OperationEntity;
+import com.sberbank.maxzhiv.bankapi.store.entities.OperationStatusEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
 
@@ -24,19 +29,20 @@ import java.util.stream.Collectors;
 public class CardService implements ICardService {
     private final ICardDAO cardDAO;
     private final IAccountDAO accountDAO;
+    private final IOperationDAO operationDAO;
 
     @Override
-    public List<CardDto> getCardByAccountId(Integer accountId) {
+    public CardDto getCardByAccountId(Integer accountId) {
         if (accountId < 0)
             throw new BadRequestException("account_id must be > 0");
 
         accountDAO.getAccountByIdOrThrowException(accountId);
 
-        List<CardEntity> cardEntities = cardDAO.getAllCardsByAccountId(accountId);
+        CardEntity card = cardDAO.getCardByAccountIdOrThrowException(accountId);
 
-        return cardEntities.stream()
-                .map(this::makeCardDto)
-                .collect(Collectors.toList());
+        cardActionability(card);
+
+        return makeCardDto(card);
     }
 
     @Override
@@ -50,6 +56,14 @@ public class CardService implements ICardService {
         String cardNumber = generateUniqueCardNumber();
 
         CardEntity card = cardDAO.createCard(account, cardNumber);
+
+        operationDAO.createOperation(
+                operationDAO.getOperationStatusOrThrowException("AWAITING"),
+                operationDAO.getOperationTypeOrThrowException("CREATE"),
+                card
+        );
+
+        card = cardDAO.getCardByAccountIdOrThrowException(accountId);
 
         return makeCardDto(card);
     }
@@ -79,10 +93,15 @@ public class CardService implements ICardService {
         CardEntity fromCard = cardDAO.findCardByNumberOrThrowException(transferDto.getFromCardNumber());
         CardEntity toCard = cardDAO.findCardByNumberOrThrowException(transferDto.getToCardNumber());
 
+        cardActionability(fromCard);
+        cardActionability(toCard);
+
         double fromBalance = fromCard.getAccount().getBalance();
         if (fromBalance - money < 0) {
             throw new NoMoneyException(String.format("No money enough on card '%s'", fromCardNumber));
         }
+
+
 
         accountDAO.pushMoney(-money, fromCard.getAccount());
         accountDAO.pushMoney(money, toCard.getAccount());
@@ -93,6 +112,8 @@ public class CardService implements ICardService {
     @Override
     public CardMoneyDto getMoneyBalance(Integer cardId) {
         CardEntity card = cardDAO.findCardByIdOrThrowException(cardId);
+
+        cardActionability(card);
 
         return makeCardMoneyDto(card.getAccount());
     }
@@ -111,9 +132,16 @@ public class CardService implements ICardService {
     }
 
     private CardDto makeCardDto(CardEntity cardEntity) {
+        OperationStatusEntity status = cardEntity.getOperations().stream()
+                .filter(operation -> operation.getOperationType().getName().equals("CREATE"))
+                .map(OperationEntity::getOperationStatus)
+                .findAny()
+                .orElse(null);
+
         return CardDto.builder()
                 .id(cardEntity.getId())
                 .number(cardEntity.getNumber())
+                .status(status != null ? status.getName() : null)
                 .build();
     }
 
@@ -158,5 +186,17 @@ public class CardService implements ICardService {
         stringBuilder.append(number);
 
         return new String(stringBuilder);
+    }
+
+    private void cardActionability(CardEntity card) {
+        Optional<OperationEntity> result = card.getOperations().stream()
+                .filter(operation -> operation.getOperationType().getName().equals("CREATE"))
+                .filter(operation -> operation.getOperationStatus().getName().equals("SUCCESS"))
+                .findAny();
+
+        if (!result.isPresent()) {
+            throw new CardNotActiveException(String.format("Card '%s' not active by bank", card.getNumber()));
+        }
+
     }
 }

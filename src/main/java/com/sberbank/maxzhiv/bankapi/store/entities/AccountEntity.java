@@ -24,6 +24,6 @@ public class AccountEntity {
     private CardEntity card;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
 }

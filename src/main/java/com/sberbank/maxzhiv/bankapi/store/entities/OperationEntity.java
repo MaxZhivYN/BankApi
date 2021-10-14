@@ -19,8 +19,14 @@ public class OperationEntity {
     private Integer id;
 
     @ManyToOne
+    @JoinColumn(name = "operation_type_id", referencedColumnName = "id")
     private OperationTypeEntity operationType;
 
     @ManyToOne
+    @JoinColumn(name = "operation_status_id", referencedColumnName = "id")
     private OperationStatusEntity operationStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "card_id", referencedColumnName = "id")
+    private CardEntity card;
 }

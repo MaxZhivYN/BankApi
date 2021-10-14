@@ -6,6 +6,7 @@ import com.sberbank.maxzhiv.bankapi.api.dto.CardMoneyDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.TransferDto;
 import com.sberbank.maxzhiv.bankapi.api.servicies.interfaces.ICardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class CardController {
     private static final String DELETE_CARD = "accounts/{account_id}/cards";
 
     @GetMapping(GET_CARDS_BY_ACCOUNT_ID)
-    public List<CardDto> getCardByAccountId(
+    public CardDto getCardByAccountId(
             @PathVariable("account_id") Integer accountId) {
 
         return cardService.getCardByAccountId(accountId);

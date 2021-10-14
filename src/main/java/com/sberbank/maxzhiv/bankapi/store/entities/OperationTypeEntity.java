@@ -8,7 +8,6 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Builder
 @Getter
 @Setter
@@ -24,7 +23,6 @@ public class OperationTypeEntity {
     private String name;
 
     @Builder.Default
-    @OneToMany
-    @JoinColumn(name = "operation_type_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "operationType")
     private List<OperationEntity> operations = new ArrayList<>();
 }

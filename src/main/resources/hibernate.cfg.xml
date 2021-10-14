@@ -16,6 +16,9 @@
         <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.RoleEntity"/>
         <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.BankEntity"/>
         <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.PartnerEntity"/>
+        <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.OperationTypeEntity"/>
+        <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.OperationStatusEntity"/>
+        <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.OperationEntity"/>
 
     </session-factory>
 </hibernate-configuration>

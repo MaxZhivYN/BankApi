@@ -44,12 +44,10 @@ public class CardControllerTest {
         mockMvc.perform(get("/api/accounts/1/cards"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json("[\n" +
-                        "    {\n" +
-                        "        \"id\": 1,\n" +
-                        "        \"number\": \"1111111111111111\"\n" +
-                        "    }\n" +
-                        "]"));
+                .andExpect(content().json("{\n" +
+                        "    \"id\": 1,\n" +
+                        "    \"number\": \"1111111111111111\"\n" +
+                        "}"));
     }
 
     @Test
@@ -67,8 +65,6 @@ public class CardControllerTest {
                 .andExpect(content().json("{\n" +
                         "    \"money\": 10000.0\n" +
                         "}"));
-
-
     }
 
     @Test
@@ -80,15 +76,16 @@ public class CardControllerTest {
 
     @Test
     public void createCardGoodTest() throws Exception {
-        mockMvc.perform(post("/api/accounts/4/cards"))
+        mockMvc.perform(post("/api/accounts/5/cards"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\n" +
-                        "    \"id\": 4,\n" +
-                        "    \"number\": \"0000000000000001\"\n" +
+                        "    \"id\": 5,\n" +
+                        "    \"number\": \"0000000000000001\",\n" +
+                        "    \"status\": \"AWAITING\"\n" +
                         "}"));
 
-        mockMvc.perform(delete("/api/accounts/4/cards"))
+        mockMvc.perform(delete("/api/accounts/5/cards"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
