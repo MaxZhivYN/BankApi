@@ -13,7 +13,6 @@
         <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.AccountEntity"/>
         <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.CardEntity"/>
         <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.UserEntity"/>
-        <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.RoleEntity"/>
         <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.BankEntity"/>
         <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.PartnerEntity"/>
         <mapping class="com.sberbank.maxzhiv.bankapi.store.entities.OperationTypeEntity"/>

@@ -4,5 +4,5 @@ import com.sberbank.maxzhiv.bankapi.api.dto.AccountCreateDto;
 import com.sberbank.maxzhiv.bankapi.api.dto.AccountDto;
 
 public interface IAccountService {
-    AccountDto create(Integer userId);
+    AccountDto create(AccountCreateDto accountCreateDto);
 }

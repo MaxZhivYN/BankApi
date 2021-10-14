@@ -5,8 +5,6 @@ import com.sberbank.maxzhiv.bankapi.api.exceptions.BadRequestException;
 import com.sberbank.maxzhiv.bankapi.api.exceptions.NotFoundException;
 import com.sberbank.maxzhiv.bankapi.store.dao.DBConfiguration;
 import com.sberbank.maxzhiv.bankapi.store.dao.interfaces.IUserDAO;
-import com.sberbank.maxzhiv.bankapi.store.entities.AccountEntity;
-import com.sberbank.maxzhiv.bankapi.store.entities.RoleEntity;
 import com.sberbank.maxzhiv.bankapi.store.entities.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
@@ -21,7 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserDAO implements IUserDAO {
     private final DBConfiguration dbConfiguration;
-    private final RoleDAO roleDAO;
 
     @Override
     public UserEntity getUserByIdOrThrowException(Integer userId) {
@@ -47,16 +44,11 @@ public class UserDAO implements IUserDAO {
                 throw new BadRequestException("This user already exists");
             }
 
-            List<RoleEntity> roles = new ArrayList<>();
-            RoleEntity roleUser = roleDAO.getUserRole();
-            roles.add(roleUser);
-
             UserEntity user = UserEntity.builder()
                     .username(userCreateDto.getUsername())
                     .firstname(userCreateDto.getFirstname())
                     .lastname(userCreateDto.getLastname())
                     .email(userCreateDto.getEmail())
-                    .roles(roles)
                     .build();
 
             session.beginTransaction();

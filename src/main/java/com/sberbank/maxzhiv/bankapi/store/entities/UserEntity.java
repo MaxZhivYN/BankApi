@@ -32,14 +32,6 @@ public class UserEntity {
     @Column(name = "email")
     private String email;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_role",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
-    )
-    private List<RoleEntity> roles;
-
     @OneToMany(mappedBy = "user")
     private List<AccountEntity> accounts;
 }

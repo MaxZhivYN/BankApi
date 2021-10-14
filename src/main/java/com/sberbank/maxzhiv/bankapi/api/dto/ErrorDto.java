@@ -1,4 +1,4 @@
-package com.sberbank.maxzhiv.bankapi.api.exceptions;
+package com.sberbank.maxzhiv.bankapi.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

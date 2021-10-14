@@ -54,18 +54,6 @@ CREATE TABLE IF NOT EXISTS Operation (
                                     foreign key (card_id) references Card(id)
 );
 
-CREATE TABLE IF NOT EXISTS Role (
-                                    id INTEGER AUTO_INCREMENT PRIMARY KEY,
-                                    name VARCHAR(100) NOT NULL UNIQUE
-);
-
-CREATE TABLE IF NOT EXISTS user_role (
-                                    user_id INTEGER,
-                                    role_id INTEGER,
-                                    foreign key (user_id) references User(id),
-                                    foreign key (role_id) references Role(id)
-);
-
 INSERT INTO OperationType (name) VALUES ('CREATE');
 INSERT INTO OperationType (name) VALUES ('TRANSFER');
 
@@ -76,14 +64,9 @@ INSERT INTO Bank (name) VALUES ('Tinkoff');
 INSERT INTO Bank (name) VALUES ('AlphaBank');
 INSERT INTO Bank (name) VALUES ('VTB');
 
-INSERT INTO Role (name) VALUES ('USER');
-INSERT INTO Role (name) VALUES ('ADMIN');
 
 INSERT INTO User (username, firstname, lastname, email) VALUES ('username1', 'Maxim', 'Zhivykh', 'maxzhiv@gmail.com');
 INSERT INTO User (username, firstname, lastname, email) VALUES ('username2', 'Artem', 'Lunin', 'artlun@gmail.com');
-
-INSERT INTO user_role (user_id, role_id) VALUES (1, 1);
-INSERT INTO user_role (user_id, role_id) VALUES (2, 2);
 
 INSERT INTO Account (balance, user_id) VALUES (10000, 1);
 INSERT INTO Account (balance, user_id) VALUES (10000, 1);
@@ -100,3 +83,7 @@ INSERT INTO Operation (operation_type_id, operation_status_id, card_id) VALUES (
 INSERT INTO Operation (operation_type_id, operation_status_id, card_id) VALUES (1, 1, 2);
 INSERT INTO Operation (operation_type_id, operation_status_id, card_id) VALUES (1, 1, 3);
 INSERT INTO Operation (operation_type_id, operation_status_id, card_id) VALUES (1, 2, 4);
+
+INSERT INTO Partner (firstname, lastname, email, bank_id) VALUES ('Valera', 'Kolokolov', 'vk@mail.ru', 1);
+INSERT INTO Partner (firstname, lastname, email, bank_id) VALUES ('Maxim', 'Maximov', 'mm@mail.ru', 2);
+INSERT INTO Partner (firstname, lastname, email, bank_id) VALUES ('Vitya', 'Baranov', 'vb@mail.ru', 3);

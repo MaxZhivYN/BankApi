@@ -20,7 +20,7 @@ public class PartnerController {
 
     private static final String CREATE_PARTNER = "partners";
     private static final String GET_PARTNERS = "partners";
-    private static final String PUSH_MONEY_TO_PARTNER = "partner/{partner_id}";
+    private static final String PUSH_MONEY_TO_PARTNER = "partners/{partner_id}";
 
     @PostMapping(CREATE_PARTNER)
     public PartnerDto create(

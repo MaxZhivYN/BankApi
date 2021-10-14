@@ -6,8 +6,6 @@ import com.sberbank.maxzhiv.bankapi.api.servicies.interfaces.IAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api")
@@ -19,8 +17,8 @@ public class AccountController {
 
     @PostMapping(CREATE_ACCOUNT)
     public AccountDto create(
-            @RequestParam("userId") Integer userId) {
-        return accountService.create(userId);
+            @RequestBody AccountCreateDto accountCreateDto) {
+        return accountService.create(accountCreateDto);
     }
 
 }

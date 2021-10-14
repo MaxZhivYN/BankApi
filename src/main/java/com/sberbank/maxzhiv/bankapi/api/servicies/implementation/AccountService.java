@@ -20,7 +20,13 @@ public class AccountService implements IAccountService {
     private final IAccountDAO accountDAO;
 
     @Override
-    public AccountDto create(Integer userId) {
+    public AccountDto create(AccountCreateDto accountCreateDto) {
+        Integer userId = accountCreateDto.getUserId();
+
+        if (Objects.isNull(userId)) {
+            throw new BadRequestException("'userId' need to be not empty");
+        }
+
 
         UserEntity user = userDAO.getUserByIdOrThrowException(userId);
 

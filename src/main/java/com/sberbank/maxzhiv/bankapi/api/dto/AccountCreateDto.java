@@ -6,7 +6,6 @@ import lombok.ToString;
 
 @Data
 @ToString
-@Builder
 public class AccountCreateDto {
     Integer userId;
 }

@@ -1,7 +1,6 @@
-package com.sberbank.maxzhiv.bankapi;
+package com.sberbank.maxzhiv.bankapi.integation;
 
 import com.sberbank.maxzhiv.bankapi.api.controllers.CardController;
-import com.sberbank.maxzhiv.bankapi.utils.Utils;
 import org.assertj.core.api.Assertions;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -30,9 +29,6 @@ public class CardControllerTest {
 
     @Autowired
     private CardController cardController;
-
-    @Autowired
-    private Utils utils;
 
     @Test
     public void cardControllerIsPresentTest() {

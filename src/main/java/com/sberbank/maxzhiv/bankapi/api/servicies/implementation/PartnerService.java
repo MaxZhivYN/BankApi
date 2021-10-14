@@ -83,7 +83,7 @@ public class PartnerService implements IPartnerService {
         }
 
         if (money < 0) {
-            throw new BadRequestException("'money' nned to ne > 0");
+            throw new BadRequestException("'money' need to be > 0");
         }
 
         partnerDAO.findByIdOrThrowException(partnerId);
@@ -98,7 +98,7 @@ public class PartnerService implements IPartnerService {
 
         accountDAO.pushMoney(-money, cardFrom.getAccount());
 
-        return null;
+        return AckDto.makeDefault(true, "success");
     }
 
     private PartnerDto makePartnerDto(PartnerEntity partnerEntity) {
